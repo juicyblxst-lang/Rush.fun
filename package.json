@@ -1,1 +1,21 @@
-{"name":"rush-fun","private":true,"packageManager":"pnpm@10.15.0","engines":{"node":">=22"},"scripts":{"build":"pnpm -r build","lint":"pnpm -r lint","typecheck":"pnpm -r typecheck","test":"pnpm -r test","format":"prettier --write ."},"devDependencies":{"prettier":"^3.6.2","typescript":"^5.9.2"}}
+{
+  "name": "rush-fun",
+  "private": true,
+  "packageManager": "pnpm@10.15.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "pnpm -r build",
+    "lint": "pnpm -r lint",
+    "typecheck": "pnpm -r typecheck",
+    "test": "pnpm -r test",
+    "format": "prettier --write .",
+    "test:e2e": "playwright test"
+  },
+  "devDependencies": {
+    "prettier": "^3.6.2",
+    "typescript": "^5.9.2",
+    "@playwright/test": "^1.55.0"
+  }
+}
