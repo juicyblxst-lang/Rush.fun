@@ -12,7 +12,7 @@ Optional:
 - BITQUERY_API_KEY — enables the StonkFun/Bitquery provider. Leave empty to run Base-only discovery.
 - GECKOTERMINAL_API_BASE — defaults to https://api.geckoterminal.com/api/v2.
 - OPENAI_API_KEY — enables source-bounded market context and moderation.
-- OPENAI_MODEL — model used by the market-context agent; defaults to gpt-5.
+- OPENAI_MODEL — model used by the market-context agent; defaults to gpt-5.6-luna.
 - PORT/API_PORT — Render PORT is preferred automatically; local API defaults to 4000.
 
 ## Web
