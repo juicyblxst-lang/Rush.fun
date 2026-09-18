@@ -26,7 +26,7 @@ export const api={
   context:(id:string)=>request<{marketId:string;generatedAt:string;sourceDataAt:string|null;model:string;summary:string;supportingArguments:string[];counterArguments:string[];limitations:string[];stale:boolean}>(
     `/v1/markets/${encodeURIComponent(id)}/context`
   ),
-  refreshContext:(token:string,id:string)=>request<{marketId:string;generatedAt:string;sourceDataAt:string|null;model:string;summary:string;supportingArguments:string[];counterArguments:string[];limitations:string[]}>(
+  refreshContext:(token:string,id:string)=>request<{marketId:string;generatedAt:string;sourceDataAt:string|null;model:string;summary:string;supportingArguments:string[];counterArguments:string[];limitations:string[];stale:boolean}>(
     `/v1/markets/${encodeURIComponent(id)}/context/refresh`,{method:"POST",headers:{Authorization:"Bearer "+token}}
   ),
   createThesis:(token:string,input:unknown)=>request<Thesis>("/v1/theses",{method:"POST",headers:{Authorization:"Bearer "+token},body:JSON.stringify(input)}),
