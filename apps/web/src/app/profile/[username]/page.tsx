@@ -1,0 +1,1 @@
+export default async function Profile({params}:{params:Promise<{username:string}>}){const {username}=await params;return <main className="page"><div className="eyebrow">Profile</div><h1>{username}</h1><div className="empty">Profile activity is backed by the Supabase profile and social tables.</div></main>;}
