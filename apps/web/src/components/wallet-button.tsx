@@ -23,5 +23,5 @@ export function WalletButton(){
       setMessage("Wallet linked.");
     }catch(error){setMessage(error instanceof Error?error.message:"Could not link wallet.");}
   }} className="pill">{signing?"Sign message…":address?.slice(0,6)+"…"+address?.slice(-4)+" · Link"}</button><button onClick={()=>disconnect()} className="pill">Disconnect</button>{message&&<span className="muted">{message}</span>}</div>;
-  return <button disabled={isPending} onClick={()=>connect({connector:connectors[0]})} className="pill">{isPending?"Connecting…":"Connect wallet"}</button>;
+  return <button disabled={isPending||connectors.length===0} onClick={()=>{const connector=connectors[0];if(!connector){setMessage("No compatible wallet connector is available.");return;}connect({connector});}} className="pill">{isPending?"Connecting…":connectors.length===0?"No wallet available":"Connect wallet"}</button>;
 }
