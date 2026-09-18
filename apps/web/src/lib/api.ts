@@ -23,7 +23,7 @@ export const api={
   ),
   communityActivity:()=>request<{items:Array<{id:string;eventType:string;createdAt:string;text:string;marketId?:string;targetId?:string;targetType?:string;actor?:Profile}>}>("/v1/activity"),
   thesis:(id:string)=>request<Thesis>(`/v1/theses/${encodeURIComponent(id)}`),
-  context:(id:string)=>request<{marketId:string;generatedAt:string;sourceDataAt:string|null;model:string;summary:string;supportingArguments:string[];counterArguments:string[];limitations:string[]}>(
+  context:(id:string)=>request<{marketId:string;generatedAt:string;sourceDataAt:string|null;model:string;summary:string;supportingArguments:string[];counterArguments:string[];limitations:string[];stale:boolean}>(
     `/v1/markets/${encodeURIComponent(id)}/context`
   ),
   refreshContext:(token:string,id:string)=>request<{marketId:string;generatedAt:string;sourceDataAt:string|null;model:string;summary:string;supportingArguments:string[];counterArguments:string[];limitations:string[]}>(
