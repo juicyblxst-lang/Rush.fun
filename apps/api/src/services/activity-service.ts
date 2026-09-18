@@ -1,0 +1,2 @@
+import {adminDb} from "../db/client.js"; import {AppError} from "../lib/errors.js";
+export async function communityActivity(limit=50){const result=await adminDb.from("agent_events").select("id,agent,event_type,market_id,payload,created_at").order("created_at",{ascending:false}).limit(limit);if(result.error)throw new AppError("DB_ERROR",result.error.message,500);return result.data??[];}
