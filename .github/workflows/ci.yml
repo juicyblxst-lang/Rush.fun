@@ -16,6 +16,7 @@ jobs:
         with:
           node-version: 22
       - run: pnpm install --no-frozen-lockfile
+      - run: pnpm --filter @rush/config --filter @rush/types build
       - run: pnpm lint
       - run: pnpm typecheck
       - run: pnpm test
