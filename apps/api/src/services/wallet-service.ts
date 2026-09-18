@@ -1,0 +1,2 @@
+import {adminDb} from "../db/client.js"; import {AppError} from "../lib/errors.js";
+export async function linkWallet(userId:string,address:string,chain:"base"){if(!/^0x[a-fA-F0-9]{40}$/.test(address))throw new AppError("VALIDATION","Invalid EVM wallet address");const {data,error}=await adminDb.from("wallets").upsert({user_id:userId,address:address.toLowerCase(),chain},{onConflict:"user_id,chain,address"}).select().single();if(error)throw new AppError("DB_ERROR",error.message,500);return data;}
