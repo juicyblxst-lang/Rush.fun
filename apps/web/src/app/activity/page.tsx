@@ -1,0 +1,1 @@
+export default function Activity(){return <main className="page"><div className="eyebrow">Activity</div><h2>Community activity</h2><div className="empty">Activity will appear here as people publish theses, posts, reactions and follows.</div></main>;}
