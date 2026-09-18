@@ -1,7 +1,7 @@
 import {randomBytes} from "node:crypto";
 import {adminDb} from "../db/client.js";
 import {AppError} from "../lib/errors.js";
-import {normalizeWalletAddress,walletLinkMessage,verifyWalletProof,WALLET_CHALLENGE_TTL_MS} from "./wallet-crypto.js";
+import {normalizeWalletAddress,walletLinkMessage,verifyWalletProof,validateWalletChallenge,WALLET_CHALLENGE_TTL_MS} from "./wallet-crypto.js";
 
 export async function createWalletChallenge(userId:string,address:string,chain:"base"){
   const normalized=normalizeWalletAddress(address);
@@ -28,11 +28,7 @@ export async function linkWallet(userId:string,address:string,chain:"base",chall
     .eq("id",challengeId).eq("user_id",userId).maybeSingle();
   if(challenge.error)throw new AppError("DB_ERROR",challenge.error.message,500);
   if(!challenge.data)throw new AppError("INVALID_SIGNATURE","Wallet link challenge not found");
-  if(challenge.data.used_at)throw new AppError("INVALID_SIGNATURE","Wallet link challenge has already been used");
-  if(new Date(challenge.data.expires_at).getTime()<Date.now())throw new AppError("INVALID_SIGNATURE","Wallet link challenge has expired");
-  if(challenge.data.address!==normalized||challenge.data.chain!==chain)throw new AppError("INVALID_SIGNATURE","Wallet link challenge does not match the wallet");
-  const expected=walletLinkMessage(normalized,challenge.data.nonce);
-  if(message!==expected)throw new AppError("INVALID_SIGNATURE","Wallet proof message does not match");
+  validateWalletChallenge(challenge.data,normalized,chain,message);
   const valid=await verifyWalletProof(normalized,message,signature);
   if(!valid)throw new AppError("INVALID_SIGNATURE","Wallet signature could not be verified");
   const consumed=await adminDb.from("wallet_link_challenges").update({used_at:new Date().toISOString()})
