@@ -1,3 +1,23 @@
-import type {FastifyRequest} from "fastify"; import {createClient} from "@supabase/supabase-js"; import {apiConfig} from "@rush/config";
-export async function getUser(request:FastifyRequest){const header=request.headers.authorization;if(!header?.startsWith("Bearer "))return null;const token=header.slice(7);const client=createClient(apiConfig.supabaseUrl,apiConfig.supabasePublishableKey,{global:{headers:{Authorization:"Bearer "+token}},auth:{persistSession:false,autoRefreshToken:false}});const result=await client.auth.getUser(token);return result.error||!result.data.user?null:result.data.user;}
-export async function requireUser(request:FastifyRequest){const user=await getUser(request);if(!user)throw new Error("Authentication required");return user;}
+import type {FastifyRequest} from "fastify";
+import {createClient} from "@supabase/supabase-js";
+import {apiConfig} from "@rush/config";
+import {AppError} from "./lib/errors.js";
+
+export async function getUser(request:FastifyRequest){
+  const header=request.headers.authorization;
+  if(!header?.startsWith("Bearer "))return null;
+  const token=header.slice(7).trim();
+  if(!token)return null;
+  const client=createClient(apiConfig.supabaseUrl,apiConfig.supabasePublishableKey,{
+    global:{headers:{Authorization:"Bearer "+token}},
+    auth:{persistSession:false,autoRefreshToken:false}
+  });
+  const result=await client.auth.getUser(token);
+  return result.error||!result.data.user?null:result.data.user;
+}
+
+export async function requireUser(request:FastifyRequest){
+  const user=await getUser(request);
+  if(!user)throw new AppError("AUTH_REQUIRED","Authentication required",401);
+  return user;
+}
