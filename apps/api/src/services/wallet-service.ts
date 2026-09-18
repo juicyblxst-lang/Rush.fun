@@ -50,6 +50,9 @@ export async function linkWallet(userId:string,address:string,chain:"base",chall
     {user_id:userId,address:normalized,chain,verified_at:new Date().toISOString()},
     {onConflict:"chain,address"}
   ).select().single();
-  if(wallet.error)throw new AppError("DB_ERROR",wallet.error.message,500);
+  if(wallet.error){
+    if(wallet.error.code==="23505")throw new AppError("WALLET_ALREADY_LINKED","This wallet is already linked to another account",409);
+    throw new AppError("DB_ERROR",wallet.error.message,500);
+  }
   return wallet.data;
 }
