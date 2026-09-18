@@ -1,0 +1,2 @@
+import type {FastifyInstance} from "fastify"; import {getProfile,getProfilePosts} from "../services/profile-service.js";
+export async function profileRoutes(app:FastifyInstance){app.get("/v1/profiles/:username",async(request,reply)=>{const profile=await getProfile((request.params as {username:string}).username);if(!profile)return reply.code(404).send({code:"NOT_FOUND",message:"Profile not found"});return {profile,posts:await getProfilePosts(profile.id)};});}
