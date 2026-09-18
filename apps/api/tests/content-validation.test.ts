@@ -1,0 +1,4 @@
+import test from "node:test";import assert from "node:assert/strict";import {validatePostBody,validateCommentBody,validateThesisContent} from "../src/services/content-validation.js";
+test("post validation trims and bounds content",()=>{assert.equal(validatePostBody(" hello "),"hello");assert.throws(()=>validatePostBody("   "));assert.throws(()=>validatePostBody("x".repeat(10001)));});
+test("comment validation trims and bounds content",()=>{assert.equal(validateCommentBody(" hello "),"hello");assert.throws(()=>validateCommentBody(""));assert.throws(()=>validateCommentBody("x".repeat(5001)));});
+test("thesis validation enforces title and body bounds",()=>{assert.deepEqual(validateThesisContent(" title ","0123456789"),{title:"title",body:"0123456789"});assert.throws(()=>validateThesisContent("ab","0123456789"));assert.throws(()=>validateThesisContent("title","short"));});
