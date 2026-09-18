@@ -1,0 +1,3 @@
+import {adminDb} from "../db/client.js"; import {AppError} from "../lib/errors.js";
+export async function getProfile(username:string){const result=await adminDb.from("profiles").select("id,username,display_name,avatar_url,bio,created_at").eq("username",username).maybeSingle();if(result.error)throw new AppError("DB_ERROR",result.error.message,500);return result.data;}
+export async function getProfilePosts(userId:string){const result=await adminDb.from("posts").select("id,market_id,thesis_id,author_id,body,created_at,profiles:author_id(id,username,display_name,avatar_url,bio,created_at)").eq("author_id",userId).order("created_at",{ascending:false}).limit(50);if(result.error)throw new AppError("DB_ERROR",result.error.message,500);return result.data??[];}
