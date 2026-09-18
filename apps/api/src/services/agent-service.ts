@@ -5,6 +5,11 @@ export async function getPersistedMarketContext(externalId:string){
  const row=result.data as {generated_at:string;source_data_at:string|null;model:string;summary:string;supporting_arguments:string[];counter_arguments:string[];limitations:string[]};
  return{marketId:externalId,generatedAt:row.generated_at,sourceDataAt:row.source_data_at,model:row.model,summary:row.summary,supportingArguments:row.supporting_arguments,counterArguments:row.counter_arguments,limitations:row.limitations};
 }
+export async function persistMarketContextFailure(externalId:string,error:unknown){
+ const market=await adminDb.from("markets").select("id").eq("external_id",externalId).maybeSingle();if(market.error||!market.data)return;
+ const message=error instanceof Error?error.message:"Unknown agent failure";
+ await adminDb.from("market_contexts").upsert({market_id:market.data.id,agent_type:"market-context-agent",model:process.env.OPENAI_MODEL??"gpt-5.6-luna",generated_at:new Date().toISOString(),source_data_at:null,summary:"",relevant_activity:[],relevant_theses:[],supporting_arguments:[],counter_arguments:[],limitations:["Context generation failed and no generated context is available."],generation_status:"failed",error_message:message,updated_at:new Date().toISOString()},{onConflict:"market_id,agent_type"});
+}
 export async function generateAndPersistMarketContext(externalId:string){
  const market=await getMarket(externalId);if(!market)throw new AppError("MARKET_NOT_FOUND","Market not found",404);
  const context=await buildMarketContext(externalId);const dbMarket=await adminDb.from("markets").select("id").eq("external_id",externalId).single();if(dbMarket.error)throw new AppError("DB_ERROR",dbMarket.error.message,500);
