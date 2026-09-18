@@ -17,5 +17,6 @@
     "prettier": "^3.6.2",
     "typescript": "^5.9.2",
     "@playwright/test": "^1.55.0"
-  }
+  },
+  "description": "RUSH.FUN social discovery for onchain markets"
 }
