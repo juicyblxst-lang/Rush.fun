@@ -1,0 +1,1 @@
+export class GeckoTerminalClient{constructor(private readonly baseUrl:string){}async get<T>(path:string):Promise<T>{const res=await fetch(this.baseUrl.replace(/\/$/,"")+path,{headers:{Accept:"application/json;version=20230203"}});if(!res.ok)throw new Error("GeckoTerminal HTTP "+res.status);return await res.json() as T;}}
