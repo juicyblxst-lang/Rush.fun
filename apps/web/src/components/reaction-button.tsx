@@ -1,16 +1,10 @@
 "use client";
-import {useState} from "react";
+import {useEffect,useState} from "react";
 import {supabase,supabaseConfigured} from "../lib/supabase";
 import {api} from "../lib/api";
-
 export function ReactionButton({targetType,targetId,initialCount}:{targetType:"thesis"|"post"|"comment";targetId:string;initialCount:number}){
-  const [liked,setLiked]=useState(false);const [count,setCount]=useState(initialCount);const [busy,setBusy]=useState(false);const [message,setMessage]=useState("");
-  return <div><button className="pill" disabled={busy} onClick={async()=>{
-    if(!supabaseConfigured){setMessage("Authentication is not configured.");return;}
-    const {data}=await supabase.auth.getSession();if(!data.session){setMessage("Sign in to react.");return;}
-    setBusy(true);setMessage("");
-    try{if(liked){await api.unreact(data.session.access_token,targetType,targetId);setLiked(false);setCount(value=>Math.max(0,value-1));}else{await api.react(data.session.access_token,{targetType,targetId,reaction:"like"});setLiked(true);setCount(value=>value+1);}}
-    catch(error){setMessage(error instanceof Error?error.message:"Could not update reaction.");}
-    finally{setBusy(false);}
-  }}>{liked?"Liked":"Like"} · {count}</button>{message&&<span className="muted">{message}</span>}</div>;
+  const [liked,setLiked]=useState(false);const [count,setCount]=useState(initialCount);const [busy,setBusy]=useState(false);const [loading,setLoading]=useState(false);const [message,setMessage]=useState("");
+  useEffect(()=>{let active=true; if(!supabaseConfigured)return; setLoading(true);supabase.auth.getSession().then(async({data})=>{if(!data.session){if(active)setLoading(false);return;}try{const state=await api.reactionStatus(data.session.access_token,targetType,targetId);if(active){setLiked(state.reacted);setCount(state.count);}}catch(error){if(active)setMessage(error instanceof Error?error.message:"Could not load reaction state.");}finally{if(active)setLoading(false);}});return()=>{active=false;};},[targetType,targetId]);
+  const toggle=async()=>{if(!supabaseConfigured){setMessage("Authentication is not configured.");return;}const {data}=await supabase.auth.getSession();if(!data.session){setMessage("Sign in to react.");return;}setBusy(true);setMessage("");try{if(liked){const before=count;await api.unreact(data.session.access_token,targetType,targetId);setLiked(false);setCount(Math.max(0,before-1));}else{await api.react(data.session.access_token,{targetType,targetId,reaction:"like"});const state=await api.reactionStatus(data.session.access_token,targetType,targetId);setLiked(state.reacted);setCount(state.count);}}catch(error){setMessage(error instanceof Error?error.message:"Could not update reaction.");}finally{setBusy(false);}};
+  return <div><button className="pill" disabled={busy||loading} onClick={toggle}>{loading?"Loading…":busy?"Saving…":liked?"Liked":"Like"} · {count}</button>{message&&<span className="muted">{message}</span>}</div>;
 }
