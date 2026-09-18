@@ -2,18 +2,7 @@ import type {Market} from "@rush/types";
 import {adminDb} from "../db/client.js";
 import type {MarketProvider} from "../providers/provider.js";
 
-export interface DiscoverySignals{volume:number;liquidity:number;priceMove:number;recency:number;theses24h:number;posts24h:number;reactions24h:number}
-export interface RankedMarket{market:Market;signals:DiscoverySignals;score:number}
-const clamp=(v:number)=>Math.max(0,Math.min(1,v));
-const normalize=(value:number,values:number[])=>{const finite=values.filter(Number.isFinite);if(!finite.length)return 0;const min=Math.min(...finite),max=Math.max(...finite);return max===min?0.5:clamp((value-min)/(max-min));};
-export function rankDiscoveryMarkets(items:Array<{market:Market;signals:DiscoverySignals}>):RankedMarket[]{
- const volumes=items.map(x=>Math.log1p(Math.max(0,x.signals.volume)));const liquidities=items.map(x=>Math.log1p(Math.max(0,x.signals.liquidity)));
- const moves=items.map(x=>Math.abs(x.signals.priceMove));const recencies=items.map(x=>x.signals.recency);const theses=items.map(x=>x.signals.theses24h);const posts=items.map(x=>x.signals.posts24h);const reactions=items.map(x=>x.signals.reactions24h);
- return items.map((x,i)=>({market:x.market,signals:x.signals,score:
-   normalize(volumes[i],volumes)*0.25+normalize(liquidities[i],liquidities)*0.10+normalize(moves[i],moves)*0.15+
-   normalize(recencies[i],recencies)*0.10+normalize(theses[i],theses)*0.20+normalize(posts[i],posts)*0.10+normalize(reactions[i],reactions)*0.10
- })).sort((a,b)=>b.score-a.score||a.market.id.localeCompare(b.market.id));
-}
+import {rankDiscoveryMarkets,DiscoverySignals} from "./discovery-ranking.js";
 async function socialSignals(markets:Market[]){
  const ids=markets.map(x=>x.id);
  if(!ids.length)return new Map<string,DiscoverySignals>();
