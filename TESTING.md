@@ -1,6 +1,6 @@
 # Testing
 
-CI runs deterministic install, shared-package compilation, lint, typecheck, unit tests and production builds. Test doubles are only used at legitimate external boundaries.
+CI runs deterministic install, shared-package compilation, lint, typecheck, unit tests and production builds. Playwright E2E runs automatically when E2E_BASE_URL is configured in GitHub Actions. Test doubles are only used at legitimate external boundaries.
 
 ## Test layers
 
