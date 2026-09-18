@@ -19,12 +19,13 @@ async function assertExists(table:"posts"|"theses",id:string){
 }
 
 export async function createPost(userId:string,input:{marketId?:string;thesisId?:string;body:string}){
+  const body=input.body.trim();if(body.length<1||body.length>10000)throw new AppError("VALIDATION","Post body must be between 1 and 10000 characters");
   if(!input.marketId&&!input.thesisId)throw new AppError("VALIDATION","A post must belong to a market or thesis");
   if(input.marketId&&input.thesisId)throw new AppError("VALIDATION","A post cannot belong to both a market and a thesis");
   if(input.thesisId)await assertExists("theses",input.thesisId);
-  await moderateIfConfigured(input.body);
+  await moderateIfConfigured(body);
   const marketId=input.marketId?await ensureMarketRecord(input.marketId):undefined;
-  const result=await adminDb.from("posts").insert({author_id:userId,market_id:marketId??null,thesis_id:input.thesisId??null,body:input.body.trim()}).select(select).single();
+  const result=await adminDb.from("posts").insert({author_id:userId,market_id:marketId??null,thesis_id:input.thesisId??null,body}).select(select).single();
   if(result.error)throw new AppError("DB_ERROR",result.error.message,500);
   return serializePost({...result.data,market_external_id:(result.data as any).markets?.external_id});
 }
@@ -37,10 +38,11 @@ export async function listPosts(externalMarketId:string){
   return (result.data??[]).map(row=>serializePost({...row,market_external_id:(row as any).markets?.external_id}));
 }
 export async function addComment(userId:string,input:{postId?:string;thesisId?:string;body:string}){
+  const body=input.body.trim();if(body.length<1||body.length>5000)throw new AppError("VALIDATION","Comment body must be between 1 and 5000 characters");
   if((input.postId?1:0)+(input.thesisId?1:0)!==1)throw new AppError("VALIDATION","Exactly one comment target is required");
   if(input.postId)await assertExists("posts",input.postId); else await assertExists("theses",input.thesisId!);
-  await moderateIfConfigured(input.body);
-  const result=await adminDb.from("comments").insert({author_id:userId,post_id:input.postId??null,thesis_id:input.thesisId??null,body:input.body.trim()}).select("id,post_id,thesis_id,author_id,body,created_at,profiles:author_id(id,username,display_name,avatar_url,bio,created_at)").single();
+  await moderateIfConfigured(body);
+  const result=await adminDb.from("comments").insert({author_id:userId,post_id:input.postId??null,thesis_id:input.thesisId??null,body}).select("id,post_id,thesis_id,author_id,body,created_at,profiles:author_id(id,username,display_name,avatar_url,bio,created_at)").single();
   if(result.error)throw new AppError("DB_ERROR",result.error.message,500);
   return result.data;
 }
