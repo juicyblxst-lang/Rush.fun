@@ -20,3 +20,6 @@ create table public.market_contexts (
 create index market_contexts_market_idx on public.market_contexts(market_id,generated_at desc);
 alter table public.market_contexts enable row level security;
 create policy "market contexts readable" on public.market_contexts for select using(true);
+create index reactions_created_at_idx on public.reactions(created_at desc);
+create index follows_following_idx on public.follows(following_id,created_at desc);
+create index posts_thesis_idx on public.posts(thesis_id,created_at desc);
