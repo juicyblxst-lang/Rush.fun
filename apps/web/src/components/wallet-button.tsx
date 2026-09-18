@@ -1,0 +1,3 @@
+"use client";
+import {useAccount,useConnect,useDisconnect} from "wagmi";
+export function WalletButton(){const {address,isConnected}=useAccount();const {connect,connectors,isPending}=useConnect();const {disconnect}=useDisconnect();if(isConnected)return <button onClick={()=>disconnect()} className="pill">{address?.slice(0,6)}…{address?.slice(-4)} · Disconnect</button>;return <button disabled={isPending} onClick={()=>connect({connector:connectors[0]})} className="pill">{isPending?"Connecting…":"Connect wallet"}</button>;}
