@@ -1,0 +1,2 @@
+import type {FastifyInstance} from "fastify"; import {communityActivity} from "../services/activity-service.js";
+export async function activityRoutes(app:FastifyInstance){app.get("/v1/activity",async request=>({items:await communityActivity(Math.min(Number((request.query as {limit?:string}).limit??50),100))}));}
