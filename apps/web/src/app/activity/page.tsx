@@ -1,1 +1,3 @@
-export default function Activity(){return <main className="page"><div className="eyebrow">Activity</div><h2>Community activity</h2><div className="empty">Activity will appear here as people publish theses, posts, reactions and follows.</div></main>;}
+"use client";
+import {useEffect,useState} from "react"; import {api} from "../../lib/api";
+export default function Activity(){const [items,setItems]=useState<Array<{id:string;agent:string;event_type:string;created_at:string}>>([]);useEffect(()=>{api.communityActivity().then(x=>setItems(x.items));},[]);return <main className="page"><div className="eyebrow">Activity</div><h2>Community activity</h2>{items.length===0?<div className="empty">No activity has been recorded yet.</div>:<div className="feed">{items.map(item=><article key={item.id}><div className="muted">{item.agent} · {new Date(item.created_at).toLocaleString()}</div><p>{item.event_type}</p></article>)}</div>}</main>;}
