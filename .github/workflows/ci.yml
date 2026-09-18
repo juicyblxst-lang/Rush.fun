@@ -10,6 +10,9 @@ concurrency:
 jobs:
   verify:
     runs-on: ubuntu-latest
+    env:
+      E2E_BASE_URL: ${{ secrets.E2E_BASE_URL }}
+      E2E_STORAGE_STATE: ${{ secrets.E2E_STORAGE_STATE }}
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -25,11 +28,8 @@ jobs:
       - run: pnpm test
       - run: pnpm build
       - name: Install Playwright browser
-        if: ${{ secrets.E2E_BASE_URL != '' }}
+        if: ${{ env.E2E_BASE_URL != '' }}
         run: pnpm exec playwright install --with-deps chromium
       - name: Run browser E2E
-        if: ${{ secrets.E2E_BASE_URL != '' }}
-        env:
-          E2E_BASE_URL: ${{ secrets.E2E_BASE_URL }}
-          E2E_STORAGE_STATE: ${{ secrets.E2E_STORAGE_STATE }}
+        if: ${{ env.E2E_BASE_URL != '' }}
         run: pnpm test:e2e
