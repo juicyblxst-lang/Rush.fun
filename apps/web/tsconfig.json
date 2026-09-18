@@ -1,1 +1,1 @@
-{"extends":"../../tsconfig.json","compilerOptions":{"lib":["dom","dom.iterable","esnext"],"jsx":"preserve","isolatedModules":true,"plugins":[{"name":"next"}]},"include":["next-env.d.ts","src/**/*.ts","src/**/*.tsx",".next/types/**/*.ts"],"exclude":["node_modules"]}
+{"extends":"../../tsconfig.json","compilerOptions":{"jsx":"preserve","noEmit":true,"plugins":[{"name":"next"}]},"include":["next-env.d.ts","src/**/*.ts","src/**/*.tsx",".next/types/**/*.ts"],"exclude":["node_modules"]}
