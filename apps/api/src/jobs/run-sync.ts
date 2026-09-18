@@ -1,0 +1,2 @@
+import {syncMarkets} from "./market-sync.js"; import {syncActivity} from "./activity-sync.js"; import {refreshAgentContext} from "./agent-refresh.js";
+const main=async()=>{const markets=await syncMarkets();const activity=await syncActivity();const agents=process.env.OPENAI_API_KEY?await refreshAgentContext():0;console.log(JSON.stringify({markets,activity,agents,finishedAt:new Date().toISOString()}));};main().catch(error=>{console.error(error);process.exit(1);});
