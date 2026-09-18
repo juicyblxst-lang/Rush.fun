@@ -12,12 +12,20 @@ export const api={
   activity:(id:string)=>request<{items:MarketActivity[]}>(`/v1/markets/${encodeURIComponent(id)}/activity`),
   theses:(id:string)=>request<{items:Thesis[]}>(`/v1/markets/${encodeURIComponent(id)}/theses`),
   posts:(id:string)=>request<{items:Post[]}>(`/v1/markets/${encodeURIComponent(id)}/posts`),
-  thesisComments:(id:string)=>request<{items:Array<{id:string;body:string;created_at:string;profiles:{display_name:string}}>}>(`/v1/theses/${encodeURIComponent(id)}/comments`),
-  postComments:(id:string)=>request<{items:Array<{id:string;body:string;created_at:string;profiles:{display_name:string}}>}>(`/v1/posts/${encodeURIComponent(id)}/comments`),
-  profile:(username:string)=>request<{profile:Profile;posts:Post[]}>(`/v1/profiles/${encodeURIComponent(username)}`),
-  communityActivity:()=>request<{items:Array<{id:string;agent:string;event_type:string;created_at:string}>}>("/v1/activity"),
+  thesisComments:(id:string)=>request<{items:Array<{id:string;body:string;created_at:string;profiles:{display_name:string}}>}>(
+    `/v1/theses/${encodeURIComponent(id)}/comments`
+  ),
+  postComments:(id:string)=>request<{items:Array<{id:string;body:string;created_at:string;profiles:{display_name:string}}>}>(
+    `/v1/posts/${encodeURIComponent(id)}/comments`
+  ),
+  profile:(username:string)=>request<{profile:Profile;posts:Post[];viewer:{authenticated:boolean;isSelf:boolean;isFollowing:boolean;followerCount:number;followingCount:number}}>(
+    `/v1/profiles/${encodeURIComponent(username)}`
+  ),
+  communityActivity:()=>request<{items:Array<{id:string;eventType:string;createdAt:string;text:string;marketId?:string;targetId?:string;targetType?:string;actor?:Profile}>}>("/v1/activity"),
   thesis:(id:string)=>request<Thesis>(`/v1/theses/${encodeURIComponent(id)}`),
-  context:(id:string)=>request<{marketId:string;generatedAt:string;text:string}>(`/v1/markets/${encodeURIComponent(id)}/context`),
+  context:(id:string)=>request<{marketId:string;generatedAt:string;model:string;summary:string;supportingArguments:string[];counterArguments:string[];limitations:string[]}>(
+    `/v1/markets/${encodeURIComponent(id)}/context`
+  ),
   createThesis:(token:string,input:unknown)=>request<Thesis>("/v1/theses",{method:"POST",headers:{Authorization:"Bearer "+token},body:JSON.stringify(input)}),
   createPost:(token:string,input:unknown)=>request<Post>("/v1/posts",{method:"POST",headers:{Authorization:"Bearer "+token},body:JSON.stringify(input)}),
   comment:(token:string,input:unknown)=>request("/v1/comments",{method:"POST",headers:{Authorization:"Bearer "+token},body:JSON.stringify(input)}),
@@ -25,6 +33,10 @@ export const api={
   linkWallet:(token:string,address:string,challengeId:string,message:string,signature:string)=>request("/v1/wallet",{method:"POST",headers:{Authorization:"Bearer "+token},body:JSON.stringify({address,chain:"base",challengeId,message,signature})}),
   follow:(token:string,userId:string)=>request<unknown>("/v1/follows",{method:"POST",headers:{Authorization:"Bearer "+token},body:JSON.stringify({userId})}),
   unfollow:(token:string,userId:string)=>request<unknown>("/v1/follows/"+encodeURIComponent(userId),{method:"DELETE",headers:{Authorization:"Bearer "+token}}),
+  followStatus:(token:string,userId:string)=>request<{following:boolean}>("/v1/follows/"+encodeURIComponent(userId)+"/status",{headers:{Authorization:"Bearer "+token}}),
   react:(token:string,input:unknown)=>request<unknown>("/v1/reactions",{method:"POST",headers:{Authorization:"Bearer "+token},body:JSON.stringify(input)}),
-  unreact:(token:string,targetType:string,targetId:string)=>request<unknown>("/v1/reactions/"+targetType+"/"+targetId,{method:"DELETE",headers:{Authorization:"Bearer "+token}})
+  unreact:(token:string,targetType:string,targetId:string)=>request<unknown>("/v1/reactions/"+encodeURIComponent(targetType)+"/"+encodeURIComponent(targetId),{method:"DELETE",headers:{Authorization:"Bearer "+token}}),
+  reactionStatus:(token:string,targetType:string,targetId:string)=>request<{reacted:boolean;reaction?:string;count:number}>(
+    "/v1/reactions/"+encodeURIComponent(targetType)+"/"+encodeURIComponent(targetId)+"/status",{headers:{Authorization:"Bearer "+token}}
+  )
 };
