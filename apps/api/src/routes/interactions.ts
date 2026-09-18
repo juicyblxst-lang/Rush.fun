@@ -1,7 +1,7 @@
 import type {FastifyInstance} from "fastify";
 import {z} from "zod";
 import {getUser} from "../auth.js";
-import {setReaction,removeReaction,follow,unfollow,getReactionStatus,getFollowStatus} from "../services/interaction-service.js";
+import {setReaction,removeReaction,follow,unfollow,getReactionStatus} from "../services/interaction-service.js";
 const target=z.enum(["thesis","post","comment"]);
 const reaction=z.object({targetType:target,targetId:z.string().uuid(),reaction:z.string().min(1).max(32).default("like")});
 export async function interactionRoutes(app:FastifyInstance){
@@ -10,5 +10,4 @@ export async function interactionRoutes(app:FastifyInstance){
   app.get("/v1/reactions/:targetType/:targetId/status",async(request,reply)=>{const user=await getUser(request);if(!user)return reply.code(401).send({code:"AUTH_REQUIRED",message:"Sign in to load reaction state"});const p=target.safeParse((request.params as {targetType:string}).targetType);const targetId=(request.params as {targetId:string}).targetId;if(!p.success||!z.string().uuid().safeParse(targetId).success)return reply.code(400).send({code:"VALIDATION",message:"Invalid reaction target"});return getReactionStatus(user.id,p.data,targetId);});
   app.post("/v1/follows",async(request,reply)=>{const user=await getUser(request);if(!user)return reply.code(401).send({code:"AUTH_REQUIRED",message:"Sign in to follow"});const p=z.object({userId:z.string().uuid()}).safeParse(request.body);if(!p.success)return reply.code(400).send({code:"VALIDATION",message:p.error.message});return follow(user.id,p.data.userId);});
   app.delete("/v1/follows/:userId",async(request,reply)=>{const user=await getUser(request);if(!user)return reply.code(401).send({code:"AUTH_REQUIRED",message:"Sign in to unfollow"});const targetId=(request.params as {userId:string}).userId;if(!z.string().uuid().safeParse(targetId).success)return reply.code(400).send({code:"VALIDATION",message:"Invalid profile id"});return unfollow(user.id,targetId);});
-  app.get("/v1/follows/:userId/status",async(request,reply)=>{const user=await getUser(request);if(!user)return reply.code(401).send({code:"AUTH_REQUIRED",message:"Sign in to load follow state"});const targetId=(request.params as {userId:string}).userId;if(!z.string().uuid().safeParse(targetId).success)return reply.code(400).send({code:"VALIDATION",message:"Invalid profile id"});return getFollowStatus(user.id,targetId);});
 }
