@@ -1,0 +1,5 @@
+import type {Post,Profile,Thesis} from "@rush/types";
+type ProfileRow={id:string;username:string;display_name:string;avatar_url?:string|null;bio?:string|null;created_at:string};
+export function profile(row:ProfileRow):Profile{return{id:row.id,username:row.username,displayName:row.display_name,avatarUrl:row.avatar_url??undefined,bio:row.bio??undefined,createdAt:row.created_at};}
+export function thesis(row:any):Thesis{return{id:row.id,marketId:row.market_external_id??row.market_id,author:profile(row.profiles),stance:row.stance,title:row.title,body:row.body,createdAt:row.created_at,updatedAt:row.updated_at,reactions:Number(row.reactions?.[0]?.count??0),comments:Number(row.comments?.[0]?.count??0)};}
+export function post(row:any):Post{return{id:row.id,marketId:row.market_external_id??undefined,thesisId:row.thesis_id??undefined,author:profile(row.profiles),body:row.body,createdAt:row.created_at,reactions:Number(row.reactions?.[0]?.count??0),comments:Number(row.comments?.[0]?.count??0)};}
