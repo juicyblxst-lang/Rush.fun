@@ -1,1 +1,1 @@
-{"extends":"../../tsconfig.json","compilerOptions":{"outDir":"dist","rootDir":"src","noEmit":false,"baseUrl":".","paths":{"@rush/config":["../../packages/config/src/index.ts"],"@rush/types":["../../packages/types/src/index.ts"]}},"include":["src/**/*.ts"]}
+{"extends":"../../tsconfig.json","compilerOptions":{"outDir":"dist","rootDir":".","noEmit":false,"baseUrl":".","paths":{"@rush/config":["../../packages/config/src/index.ts"],"@rush/types":["../../packages/types/src/index.ts"]}},"include":["src/**/*.ts"]}
