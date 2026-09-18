@@ -43,8 +43,9 @@ export async function linkWallet(userId:string,address:string,chain:"base",chall
   const valid=await verifyMessage({address:normalized as `0x${string}`,message,signature});
   if(!valid)throw new AppError("INVALID_SIGNATURE","Wallet signature could not be verified");
   const consumed=await adminDb.from("wallet_link_challenges").update({used_at:new Date().toISOString()})
-    .eq("id",challengeId).eq("user_id",userId).is("used_at",null);
+    .eq("id",challengeId).eq("user_id",userId).is("used_at",null).select("id").maybeSingle();
   if(consumed.error)throw new AppError("DB_ERROR",consumed.error.message,500);
+  if(!consumed.data)throw new AppError("INVALID_SIGNATURE","Wallet link challenge has already been used");
   const wallet=await adminDb.from("wallets").upsert(
     {user_id:userId,address:normalized,chain,verified_at:new Date().toISOString()},
     {onConflict:"chain,address"}
