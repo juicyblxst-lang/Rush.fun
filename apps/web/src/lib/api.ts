@@ -23,8 +23,11 @@ export const api={
   ),
   communityActivity:()=>request<{items:Array<{id:string;eventType:string;createdAt:string;text:string;marketId?:string;targetId?:string;targetType?:string;actor?:Profile}>}>("/v1/activity"),
   thesis:(id:string)=>request<Thesis>(`/v1/theses/${encodeURIComponent(id)}`),
-  context:(id:string)=>request<{marketId:string;generatedAt:string;model:string;summary:string;supportingArguments:string[];counterArguments:string[];limitations:string[]}>(
+  context:(id:string)=>request<{marketId:string;generatedAt:string;sourceDataAt:string|null;model:string;summary:string;supportingArguments:string[];counterArguments:string[];limitations:string[]}>(
     `/v1/markets/${encodeURIComponent(id)}/context`
+  ),
+  refreshContext:(token:string,id:string)=>request<{marketId:string;generatedAt:string;sourceDataAt:string|null;model:string;summary:string;supportingArguments:string[];counterArguments:string[];limitations:string[]}>(
+    `/v1/markets/${encodeURIComponent(id)}/context/refresh`,{method:"POST",headers:{Authorization:"Bearer "+token}}
   ),
   createThesis:(token:string,input:unknown)=>request<Thesis>("/v1/theses",{method:"POST",headers:{Authorization:"Bearer "+token},body:JSON.stringify(input)}),
   createPost:(token:string,input:unknown)=>request<Post>("/v1/posts",{method:"POST",headers:{Authorization:"Bearer "+token},body:JSON.stringify(input)}),
