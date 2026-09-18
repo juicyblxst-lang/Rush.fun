@@ -1,4 +1,4 @@
-import test from "node:test";import assert from "node:assert/strict";import {rankDiscoveryMarkets} from "../src/services/discovery-service.js";
+import test from "node:test";import assert from "node:assert/strict";import {rankDiscoveryMarkets} from "../src/services/discovery-ranking.js";
 const market=(id:string,priceChange=0)=>({id,provider:"base",chain:"base" as const,kind:"pool" as const,name:id,symbol:id,address:id,updatedAt:new Date().toISOString(),priceChange24h:priceChange});
 test("discovery ranking is deterministic and activity-aware",()=>{const ranked=rankDiscoveryMarkets([
  {market:market("quiet"),signals:{volume:10,liquidity:10,priceMove:0,recency:.1,theses24h:0,posts24h:0,reactions24h:0}},
