@@ -5,6 +5,7 @@
 Create a Supabase project and apply migrations in order:
 1. supabase/migrations/0001_initial.sql
 2. supabase/migrations/0002_wallet_link_challenges.sql
+3. supabase/migrations/0003_market_contexts.sql
 
 Configure Auth for the email OTP/magic-link flow used by the web app. Set the production Site URL and redirect URLs to the deployed Vercel origin. Keep the service-role key server-only.
 
@@ -50,7 +51,7 @@ Schedule this command from a trusted scheduler. The sync is idempotent on provid
 6. Confirm the wallet is persisted in Supabase.
 7. Publish a thesis and comment; refresh and confirm persistence.
 8. React and follow a profile; refresh and confirm persistence.
-9. Open market context only when OPENAI_API_KEY is configured.
+9. Open market context only when OPENAI_API_KEY is configured; the UI reads persisted context and the authenticated refresh endpoint regenerates it into the same store.
 10. Confirm API /health returns status ok.
 
 RUSH.FUN does not fabricate balances, trades, market activity, or execution receipts. Participation/execution must be added through a verified provider adapter before any transaction flow is exposed.
