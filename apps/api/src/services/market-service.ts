@@ -1,6 +1,5 @@
-import {marketProviders} from "../providers/index.js"; import type {Market} from "@rush/types";
-export async function discoverMarkets(limit=24){const results=await Promise.allSettled(marketProviders.map(p=>p.listMarkets({limit})));return results.flatMap(r=>r.status==="fulfilled"?r.value.items:[]);}
-export async function getMarket(id:string){const provider=marketProviders.find(p=>id.startsWith(p.name+":"));return provider?provider.getMarket(id):null;}
-export async function searchMarkets(q:string,limit=20){const results=await Promise.allSettled(marketProviders.map(p=>p.searchMarkets(q,limit)));return results.flatMap(r=>r.status==="fulfilled"?r.value:[]).slice(0,limit);}
-export async function marketActivity(id:string,limit=50){const provider=marketProviders.find(p=>id.startsWith(p.name+":"));return provider?provider.getMarketActivity(id,limit):[];}
-export const marketToResponse=(market:Market)=>market;
+import {marketProviders} from "../providers/index.js"; import type {Market} from "@rush/types"; import {AppError} from "../lib/errors.js";
+export async function discoverMarkets(limit=24):Promise<Market[]>{const results=await Promise.allSettled(marketProviders.map(p=>p.listMarkets({limit})));const fulfilled=results.filter(r=>r.status==="fulfilled") as PromiseFulfilledResult<{items:Market[]}>[];if(!fulfilled.length)throw new AppError("PROVIDERS_UNAVAILABLE","No configured market provider returned data",503);return fulfilled.flatMap(r=>r.value.items);}
+export async function getMarket(id:string){const provider=marketProviders.find(p=>id.startsWith(p.name+":"));if(!provider)return null;return provider.getMarket(id);}
+export async function searchMarkets(q:string,limit=20){const results=await Promise.allSettled(marketProviders.map(p=>p.searchMarkets(q,limit)));const fulfilled=results.filter(r=>r.status==="fulfilled") as PromiseFulfilledResult<Market[]>[];if(!fulfilled.length)throw new AppError("PROVIDERS_UNAVAILABLE","No configured market provider returned search results",503);return fulfilled.flatMap(r=>r.value).slice(0,limit);}
+export async function marketActivity(id:string,limit=50){const provider=marketProviders.find(p=>id.startsWith(p.name+":"));if(!provider)return [];return provider.getMarketActivity(id,limit);}
