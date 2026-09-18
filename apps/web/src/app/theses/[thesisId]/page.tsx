@@ -1,0 +1,1 @@
+export default async function ThesisPage({params}:{params:Promise<{thesisId:string}>}){const {thesisId}=await params;return <main className="page"><div className="eyebrow">Thesis</div><h1>{thesisId}</h1><div className="empty">The thesis is persisted as a social object and linked from its market discussion.</div></main>;}
