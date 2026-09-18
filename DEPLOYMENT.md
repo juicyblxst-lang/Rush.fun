@@ -1,5 +1,17 @@
 # Deployment
 
-Vercel deploys apps/web with NEXT_PUBLIC_* variables.
-Render deploys apps/api using pnpm install --no-frozen-lockfile, then pnpm --filter @rush/api build and pnpm --filter @rush/api start.
-Supabase applies supabase/migrations in order and supplies Auth.
+## Vercel
+
+Create the Vercel project against this repository with Root Directory set to apps/web. Vercel then uses the Next.js project in that directory. Set NEXT_PUBLIC_API_URL, NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY and optionally NEXT_PUBLIC_BASE_RPC_URL.
+
+## Render
+
+Deploy the repository using render.yaml. The API service builds the monorepo with pnpm and starts the compiled Fastify service. Render's PORT is honored by the API automatically. Set the Supabase, Bitquery, OpenAI and CORS environment variables in Render.
+
+## Supabase
+
+Create a project and apply supabase/migrations/0001_initial.sql. Configure Supabase Auth for email OTP/magic-link authentication. Keep the service-role key server-only.
+
+## Synchronization
+
+Run pnpm --filter @rush/api sync from a trusted scheduler after production credentials and the Supabase schema are configured. The sync command is idempotent at the provider/market/activity keys and continues across individual provider failures.
