@@ -45,6 +45,9 @@ export async function unfollow(userId:string,targetUserId:string){
 }
 export async function getFollowStatus(userId:string,targetUserId:string){
   if(userId===targetUserId)return {following:false};
+  const target=await adminDb.from("profiles").select("id").eq("id",targetUserId).maybeSingle();
+  if(target.error)throw new AppError("DB_ERROR",target.error.message,500);
+  if(!target.data)throw new AppError("NOT_FOUND","Profile not found",404);
   const result=await adminDb.from("follows").select("follower_id").eq("follower_id",userId).eq("following_id",targetUserId).maybeSingle();
   if(result.error)throw new AppError("DB_ERROR",result.error.message,500);
   return {following:Boolean(result.data)};
