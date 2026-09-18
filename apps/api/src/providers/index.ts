@@ -1,0 +1,2 @@
+import {apiConfig} from "@rush/config"; import {StonkFunProvider} from "./stonkfun/markets.js"; import {BitqueryClient} from "./stonkfun/client.js"; import {BaseProvider} from "./base/markets.js"; import {GeckoTerminalClient} from "./base/client.js"; import type {MarketProvider} from "./provider.js";
+export const marketProviders:MarketProvider[]=[...(apiConfig.bitqueryApiKey?[new StonkFunProvider(new BitqueryClient(apiConfig.bitqueryApiKey))]:[]),new BaseProvider(new GeckoTerminalClient(apiConfig.geckoBase))];
