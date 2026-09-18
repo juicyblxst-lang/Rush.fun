@@ -1,0 +1,4 @@
+import {AppError} from "../lib/errors.js";
+export function validatePostBody(value:string){const body=value.trim();if(body.length<1||body.length>10000)throw new AppError("VALIDATION","Post body must be between 1 and 10000 characters");return body;}
+export function validateCommentBody(value:string){const body=value.trim();if(body.length<1||body.length>5000)throw new AppError("VALIDATION","Comment body must be between 1 and 5000 characters");return body;}
+export function validateThesisContent(titleValue:string,bodyValue:string){const title=titleValue.trim(),body=bodyValue.trim();if(title.length<3||title.length>160)throw new AppError("VALIDATION","Thesis title must be between 3 and 160 characters");if(body.length<10||body.length>10000)throw new AppError("VALIDATION","Thesis body must be between 10 and 10000 characters");return {title,body};}
