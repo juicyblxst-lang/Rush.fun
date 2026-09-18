@@ -8,6 +8,9 @@ on:
       - apps/*/package.json
       - packages/*/package.json
       - '!pnpm-lock.yaml'
+concurrency:
+  group: rush-lockfile-${{ github.ref }}
+  cancel-in-progress: true
 permissions:
   contents: write
 jobs:
