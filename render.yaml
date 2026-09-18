@@ -2,7 +2,7 @@ services:
   - type: web
     name: rush-api
     runtime: node
-    buildCommand: corepack enable && pnpm install --no-frozen-lockfile && pnpm --filter @rush/api build
+    buildCommand: corepack enable && pnpm install --no-frozen-lockfile && pnpm --filter @rush/config --filter @rush/types build && pnpm --filter @rush/api build
     startCommand: pnpm --filter @rush/api start
     healthCheckPath: /health
     envVars:
