@@ -1,0 +1,3 @@
+import type {Metadata} from "next"; import {WalletProvider} from "../providers/wallet"; import {WalletButton} from "../components/wallet-button"; import {AuthButton} from "../components/auth-button"; import "./globals.css";
+export const metadata:Metadata={title:"RUSH.FUN — See what people are watching",description:"Discover markets, read the theses behind them, and form your own view."};
+export default function RootLayout({children}:{children:React.ReactNode}){return <html lang="en"><body><WalletProvider><header><a href="/" className="brand">RUSH<span>.FUN</span></a><nav><a href="/discover">Discover</a><a href="/activity">Activity</a></nav><div className="header-actions"><AuthButton/><WalletButton/></div></header>{children}</WalletProvider></body></html>;}
