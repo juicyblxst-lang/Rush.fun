@@ -6,7 +6,7 @@ Create the Vercel project against this repository with Root Directory set to app
 
 ## Render
 
-Deploy the repository using render.yaml. The API service builds the monorepo with pnpm and starts the compiled Fastify service. Render's PORT is honored by the API automatically. Set the Supabase, Bitquery, OpenAI and CORS environment variables in Render.
+Deploy the repository using render.yaml. The API service builds the shared config/types packages before compiling Fastify, then starts the compiled API. Render's PORT is honored by the API automatically. Set the Supabase, Bitquery, OpenAI and CORS environment variables in Render.
 
 ## Supabase
 
