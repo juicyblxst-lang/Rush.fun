@@ -1,0 +1,2 @@
+import {adminDb} from "../db/client.js"; import {buildMarketContext} from "../agents/market-context-agent.js";
+export async function refreshAgentContext(limit=25){const markets=await adminDb.from("markets").select("id,external_id").order("updated_at",{ascending:false}).limit(limit);let count=0;for(const market of markets.data??[]){try{const context=await buildMarketContext(market.external_id);await adminDb.from("agent_events").insert({agent:"market-context-agent",event_type:"context_refreshed",market_id:market.id,payload:context});count++;}catch{continue;}}return count;}
