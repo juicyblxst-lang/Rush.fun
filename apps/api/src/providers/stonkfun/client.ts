@@ -4,12 +4,15 @@ export class BitqueryClient{
  async query<T>(query:string):Promise<T>{
   const controller=new AbortController();const timeout=setTimeout(()=>controller.abort(),15000);
   try{
+   for(let attempt=0;attempt<3;attempt++){
    const res=await fetch(this.endpoint,{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+this.apiKey},body:JSON.stringify({query}),signal:controller.signal});
-   if(!res.ok)throw new ProviderUnavailable("stonkfun","Bitquery returned HTTP "+res.status);
+   if(!res.ok){if((res.status===429||res.status>=500)&&attempt<2){await new Promise(resolve=>setTimeout(resolve,(attempt+1)*1000));continue;}throw new ProviderUnavailable("stonkfun","Bitquery returned HTTP "+res.status);}
    const body=await res.json() as {data?:T;errors?:Array<{message:string}>};
    if(body.errors?.length)throw new ProviderUnavailable("stonkfun",body.errors.map(e=>e.message).join("; "));
    if(!body.data)throw new ProviderUnavailable("stonkfun","Bitquery returned no data");
    return body.data;
+   }
+   throw new ProviderUnavailable("stonkfun","Bitquery request failed");
   }catch(error){if(error instanceof DOMException&&error.name==="AbortError")throw new ProviderUnavailable("stonkfun","Bitquery request timed out");throw error;}
   finally{clearTimeout(timeout);}
  }
