@@ -1,0 +1,3 @@
+import type {Market,MarketActivity} from "@rush/types";
+export interface MarketProvider{readonly name:string;listMarkets(input:{limit:number;cursor?:string}):Promise<{items:Market[];nextCursor?:string}>;getMarket(id:string):Promise<Market|null>;getAsset(address:string):Promise<Market|null>;getQuoteAssets():Promise<Market[]>;getMarketActivity(marketId:string,limit:number):Promise<MarketActivity[]>;searchMarkets(query:string,limit:number):Promise<Market[]>;}
+export class ProviderUnavailable extends Error{constructor(public provider:string,message:string){super(message);}}
