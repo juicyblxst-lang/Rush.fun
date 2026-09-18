@@ -3,7 +3,7 @@ import {AppError} from "../lib/errors.js";
 import {ensureMarketRecord} from "./market-record-service.js";
 import {moderateText} from "../agents/moderation-agent.js";
 import {apiConfig} from "@rush/config";
-import {post as serializePost} from "../lib/serializers.js";
+import {post as serializePost} from "../lib/serializers.js";import {validatePostBody,validateCommentBody} from "./content-validation.js";
 
 const select="id,market_id,thesis_id,author_id,body,created_at,profiles:author_id(id,username,display_name,avatar_url,bio,created_at),reactions:reactions(count),comments:comments(count),markets:market_id(external_id)";
 
@@ -19,7 +19,7 @@ async function assertExists(table:"posts"|"theses",id:string){
 }
 
 export async function createPost(userId:string,input:{marketId?:string;thesisId?:string;body:string}){
-  const body=input.body.trim();if(body.length<1||body.length>10000)throw new AppError("VALIDATION","Post body must be between 1 and 10000 characters");
+  const body=validatePostBody(input.body);
   if(!input.marketId&&!input.thesisId)throw new AppError("VALIDATION","A post must belong to a market or thesis");
   if(input.marketId&&input.thesisId)throw new AppError("VALIDATION","A post cannot belong to both a market and a thesis");
   if(input.thesisId)await assertExists("theses",input.thesisId);
@@ -38,7 +38,7 @@ export async function listPosts(externalMarketId:string){
   return (result.data??[]).map(row=>serializePost({...row,market_external_id:(row as any).markets?.external_id}));
 }
 export async function addComment(userId:string,input:{postId?:string;thesisId?:string;body:string}){
-  const body=input.body.trim();if(body.length<1||body.length>5000)throw new AppError("VALIDATION","Comment body must be between 1 and 5000 characters");
+  const body=validateCommentBody(input.body);
   if((input.postId?1:0)+(input.thesisId?1:0)!==1)throw new AppError("VALIDATION","Exactly one comment target is required");
   if(input.postId)await assertExists("posts",input.postId); else await assertExists("theses",input.thesisId!);
   await moderateIfConfigured(body);
