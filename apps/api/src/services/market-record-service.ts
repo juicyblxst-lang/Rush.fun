@@ -1,0 +1,14 @@
+import {adminDb} from "../db/client.js";
+import {getMarket} from "./market-service.js";
+import {AppError} from "../lib/errors.js";
+
+export async function ensureMarketRecord(externalId:string){
+  const market=await getMarket(externalId);
+  if(!market) throw new AppError("MARKET_NOT_FOUND","The market is no longer available from its provider",404);
+  const provider=market.provider;
+  const source=await adminDb.from("provider_sources").upsert({provider,external_id:market.id,chain:market.chain,source_url:market.sourceUrl??null,metadata:{}},{onConflict:"provider,external_id"}).select("id").single();
+  if(source.error) throw new AppError("DB_ERROR",source.error.message,500);
+  const row=await adminDb.from("markets").upsert({provider_source_id:source.data.id,provider,chain:market.chain,kind:market.kind,external_id:market.id,market_address:market.marketAddress??market.address,quote_symbol:market.quoteSymbol??null,price_usd:market.priceUsd??null,price_change_24h:market.priceChange24h??null,market_cap_usd:market.marketCapUsd??null,volume_24h_usd:market.volume24hUsd??null,liquidity_usd:market.liquidityUsd??null,source_url:market.sourceUrl??null,observed_at:market.updatedAt},{onConflict:"provider,external_id"}).select("id").single();
+  if(row.error) throw new AppError("DB_ERROR",row.error.message,500);
+  return row.data.id;
+}
