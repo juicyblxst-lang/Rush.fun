@@ -1,0 +1,2 @@
+import test from "node:test"; import assert from "node:assert/strict"; import {BaseProvider} from "../src/providers/base/markets.js";
+test("Base provider exposes the normalized contract",()=>{assert.equal(new BaseProvider({get:async()=>({data:[]})} as never).name,"base");});
