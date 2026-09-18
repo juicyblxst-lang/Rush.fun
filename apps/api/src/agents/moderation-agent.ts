@@ -1,0 +1,2 @@
+import OpenAI from "openai"; import {apiConfig} from "@rush/config"; import {AppError} from "../lib/errors.js";
+export async function moderateText(text:string){if(!apiConfig.openAiApiKey)throw new AppError("AGENT_UNAVAILABLE","Moderation agent is not configured",503);const client=new OpenAI({apiKey:apiConfig.openAiApiKey});const result=await client.moderations.create({model:"omni-moderation-latest",input:text});return{flagged:result.results[0]?.flagged??false,categories:result.results[0]?.categories??{}};}
