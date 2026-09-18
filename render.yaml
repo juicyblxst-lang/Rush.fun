@@ -6,8 +6,6 @@ services:
     startCommand: pnpm --filter @rush/api start
     healthCheckPath: /health
     envVars:
-      - key: API_PORT
-        value: "4000"
       - key: API_CORS_ORIGIN
         sync: false
       - key: SUPABASE_URL
