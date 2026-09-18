@@ -36,7 +36,6 @@ export const api={
   linkWallet:(token:string,address:string,challengeId:string,message:string,signature:string)=>request("/v1/wallet",{method:"POST",headers:{Authorization:"Bearer "+token},body:JSON.stringify({address,chain:"base",challengeId,message,signature})}),
   follow:(token:string,userId:string)=>request<unknown>("/v1/follows",{method:"POST",headers:{Authorization:"Bearer "+token},body:JSON.stringify({userId})}),
   unfollow:(token:string,userId:string)=>request<unknown>("/v1/follows/"+encodeURIComponent(userId),{method:"DELETE",headers:{Authorization:"Bearer "+token}}),
-  followStatus:(token:string,userId:string)=>request<{following:boolean}>("/v1/follows/"+encodeURIComponent(userId)+"/status",{headers:{Authorization:"Bearer "+token}}),
   react:(token:string,input:unknown)=>request<unknown>("/v1/reactions",{method:"POST",headers:{Authorization:"Bearer "+token},body:JSON.stringify(input)}),
   unreact:(token:string,targetType:string,targetId:string)=>request<unknown>("/v1/reactions/"+encodeURIComponent(targetType)+"/"+encodeURIComponent(targetId),{method:"DELETE",headers:{Authorization:"Bearer "+token}}),
   reactionStatus:(token:string,targetType:string,targetId:string)=>request<{reacted:boolean;reaction?:string;count:number}>(
