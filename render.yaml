@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: rush-api
+    runtime: node
+    buildCommand: corepack enable && pnpm install --no-frozen-lockfile && pnpm --filter @rush/api build
+    startCommand: pnpm --filter @rush/api start
+    healthCheckPath: /health
+    envVars:
+      - key: API_PORT
+        value: "4000"
+      - key: API_CORS_ORIGIN
+        sync: false
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_PUBLISHABLE_KEY
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: BITQUERY_API_KEY
+        sync: false
+      - key: GECKOTERMINAL_API_BASE
+        value: https://api.geckoterminal.com/api/v2
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: OPENAI_MODEL
+        value: gpt-5.6-luna
